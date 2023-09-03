@@ -1,0 +1,21 @@
+# sudo docker-compose up -d
+# sudo docker-compose down --volumes
+
+version: '3.8'
+services:
+  db3:
+    image: postgres:alpine # https://hub.docker.com/_/postgres for details on env options etc.
+              # most importantly, will run init scripts in docker-entrypoint-initdb.d folder
+    restart: always
+    environment: # pass these env vars
+      - POSTGRES_DB=dbname # must be before postgres_user, else db will be named same as user
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=dbpassword
+    ports:
+      - "5432:5432" # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    volumes: 
+      - ./scripts/:/docker-entrypoint-initdb.d
+      - db:/var/lib/postgresql/data
+volumes: #docker volume ls // see volume attached to this container
+  db:
+    driver: local
